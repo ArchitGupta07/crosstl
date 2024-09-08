@@ -62,6 +62,27 @@ def test_else_statement_tokenization():
         pytest.fail("Struct parsing not implemented.")
 
 
+def test_else_if_statement_tokenization():
+    code = """
+    if (!a) {
+        return b;
+    } 
+    if (!b) {
+        return a;
+    } else if (a < b) {
+        return b;
+    } else if (a > b) {
+        return a;
+    } else {
+        return 0;
+    }
+    """
+    try:
+        tokenize_code(code)
+    except SyntaxError:
+        pytest.fail("Struct parsing not implemented.")
+
+
 def test_function_call_tokenization():
     code = """
     shader PerlinNoise {
@@ -159,7 +180,19 @@ def test_logical_operators_tokenization():
     try:
         tokenize_code(code)
     except SyntaxError:
-        pytest.fail("Logical operators tokenization not implemented.")
+        pytest.fail("Logical Operators tokenization not implemented.")
+
+
+def test_assignment_shift_operators():
+    code = """
+    a >>= 1;
+    b <<= 1;
+        """
+
+    try:
+        tokenize_code(code)
+    except SyntaxError:
+        pytest.fail("Shift operators tokenization failed.")
 
 
 def test_assignment_operators_tokenization():
