@@ -1,5 +1,5 @@
 <div style="display: block;" align="center">
-    <img class="only-dark" width="10%" height="10%" src="https://crossgl.github.io/_static/logo.png#gh-dark-mode-only"/>
+    <img class="only-dark" width="10%" height="10%" src="https://github.com/CrossGL/crossgl-docs/blob/main/docs/assets/logo.png#gh-dark-mode-only"/>
 </div>
 
 
@@ -8,19 +8,19 @@
 <div style="display: block;" align="center">
     <img class="dark-light" width="5%" >
     <a href="https://crossgl.net/">
-        <img class="dark-light" height="5%" width="5%" src="https://github.com/samthakur587/docs2.0/blob/main/web_icon.png">
+        <img class="dark-light" height="5%" width="5%" src="https://github.com/CrossGL/crossgl-docs/blob/main/docs/assets/web_icon.png">
     </a>
     <img class="dark-light" width="5%" >
-    <a href="https://crossgl.github.io/language.html">
-        <img class="dark-light" height="5%" width="5%" src="https://github.com/samthakur587/docs2.0/blob/main/docs.png">
+    <a href="https://crossgl.github.io/crossgl-docs/language.html">
+        <img class="dark-light" height="5%" width="5%" src="https://github.com/CrossGL/crossgl-docs/blob/main/docs/assets/docs.png">
     </a>
     <img class="dark-light" width="5%" >
     <a href="https://github.com/CrossGL/demos">
-        <img class="dark-light" height="5%" width="5%" src="https://github.com/samthakur587/docs2.0/blob/main/written.png">
+        <img class="dark-light" height="5%" width="5%" src="https://github.com/CrossGL/crossgl-docs/blob/main/docs/assets/written.png">
     </a>
     <img class="dark-light" width="5%" >
-    <a href="https://crossgl.github.io/design.html">
-        <img class="dark-light" height="5%" width="5%" src="https://github.com/samthakur587/docs2.0/blob/main/strategic-plan.png">
+    <a href="https://crossgl.github.io/crossgl-docs/design.html">
+        <img class="dark-light" height="5%" width="5%" src="https://github.com/CrossGL/crossgl-docs/blob/main/docs/assets/strategic-plan.png">
     </a>
 </div>
 
@@ -52,7 +52,7 @@
 
 The CrossTL is a core component of our platform, enabling the conversion of CrossGL shader code directly into various graphics APIs, such as DirectX, Metal, Vulkan, and OpenGL and vice-versa. This translator simplifies shader development by allowing a single, unified shader language to be used across multiple platforms.
 
-## 🌟 CrossGL: Revolutionizing Shader Development
+## 🌟 CrossGL-Graphica: Revolutionizing Shader Development
 
 ### The Universal Shader Language
 
@@ -66,6 +66,7 @@ Imagine writing a shader _once_ and deploying it across:
 - 🎮 **DirectX**
 - 🖥️ **OpenGL**
 - 🖥️ **Vulkan**
+- ⚙️  **Slang** 
 - 🔥 **Mojo**
 
 ...all without changing a single line of code!
@@ -75,6 +76,7 @@ Imagine writing a shader _once_ and deploying it across:
 - Metal
 - DirectX
 - OpenGL
+- Slang
 
 
 ## 💡 Key Benefits
@@ -269,7 +271,7 @@ We believe that everyone can contribute and make a difference. Whether
 it\'s writing code, fixing bugs, or simply sharing feedback,
 your contributions are definitely welcome and appreciated 🙌
 
-find out more info in our [Contributing guide](https://crossgl.github.io/contribution.html)
+find out more info in our [Contributing guide](CONTRIBUTING.md)
 
 <a href="https://github.com/CrossGL/crosstl/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=CrossGL/crosstl" />

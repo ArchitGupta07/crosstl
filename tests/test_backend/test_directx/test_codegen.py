@@ -1,6 +1,6 @@
-from crosstl.src.backend.DirectX import DirectxCrossGLCodeGen
-from crosstl.src.backend.DirectX.DirectxLexer import HLSLLexer
-from crosstl.src.backend.DirectX.DirectxParser import HLSLParser
+from crosstl.backend.DirectX import DirectxCrossGLCodeGen
+from crosstl.backend.DirectX.DirectxLexer import HLSLLexer
+from crosstl.backend.DirectX.DirectxParser import HLSLParser
 import pytest
 from typing import List
 
@@ -63,7 +63,6 @@ def test_struct_codegen():
         tokens = tokenize_code(code)
         ast = parse_code(tokens)
         generated_code = generate_code(ast)
-        print("############## struct code ##############")
         print(generated_code)
     except SyntaxError:
         pytest.fail("Struct parsing or code generation not implemented.")
@@ -110,7 +109,6 @@ def test_if_codegen():
         tokens = tokenize_code(code)
         ast = parse_code(tokens)
         generated_code = generate_code(ast)
-        print("############## if code ##############")
         print(generated_code)
     except SyntaxError:
         pytest.fail("If statement parsing or code generation not implemented.")
@@ -157,10 +155,104 @@ def test_for_codegen():
         tokens = tokenize_code(code)
         ast = parse_code(tokens)
         generated_code = generate_code(ast)
-        print("############## for code ##############")
         print(generated_code)
     except SyntaxError:
         pytest.fail("For loop parsing or code generation not implemented.")
+
+
+def test_while_codegen():
+    code = """
+    struct VSInput {
+    float4 position : POSITION;
+    float4 color : TEXCOORD0;
+    };
+
+    struct VSOutput {
+        float4 out_position : TEXCOORD0;
+    };
+
+    VSOutput VSMain(VSInput input) {
+        VSOutput output;
+        output.out_position = input.position;
+        int i = 0;
+        while (i < 10) {
+            output.out_position = input.color;
+            i = i + 1;  // Increment the loop variable
+        }
+        return output;
+    }
+
+    struct PSInput {
+        float4 in_position : TEXCOORD0;
+    };
+
+    struct PSOutput {
+        float4 out_color : SV_TARGET0;
+    };
+
+    PSOutput PSMain(PSInput input) {
+        PSOutput output;
+        output.out_color = input.in_position;
+        int i = 0;
+        while (i < 10) {
+            output.out_color = float4(1.0, 1.0, 1.0, 1.0);
+            i = i + 1;  // Increment the loop variable
+        }
+        return output;
+    }
+    """
+    try:
+        tokens = tokenize_code(code)
+        ast = parse_code(tokens)
+        generated_code = generate_code(ast)
+        print(generated_code)
+    except SyntaxError:
+        pytest.fail("While loop parsing or code generation not implemented.")
+
+
+def test_do_while_codegen():
+    code = """
+    struct VSInput {
+        float4 position : POSITION;
+        float4 color : TEXCOORD0;
+    };
+    struct VSOutput {
+        float4 out_position : TEXCOORD0;
+    };
+    VSOutput VSMain(VSInput input) {
+        VSOutput output;
+        output.out_position = input.position;
+        int i = 0;
+        do {
+            output.out_position = input.color;
+            i = i + 1;  // Increment the loop variable
+        } while (i < 10);
+        return output;
+    }
+    struct PSInput {
+        float4 in_position : TEXCOORD0;
+    };
+    struct PSOutput {
+        float4 out_color : SV_TARGET0;
+    };
+    PSOutput PSMain(PSInput input) {
+        PSOutput output;
+        output.out_color = input.in_position;
+        int i = 0;
+        do {
+            output.out_color = float4(1.0, 1.0, 1.0, 1.0);
+            i = i + 1;  // Increment the loop variable
+        } while (i < 10);
+        return output;
+    }
+    """
+    try:
+        tokens = tokenize_code(code)
+        ast = parse_code(tokens)
+        generated_code = generate_code(ast)
+        print(generated_code)
+    except SyntaxError:
+        pytest.fail("While loop parsing or code generation not implemented.")
 
 
 def test_else_codegen():
@@ -210,7 +302,6 @@ def test_else_codegen():
         tokens = tokenize_code(code)
         ast = parse_code(tokens)
         generated_code = generate_code(ast)
-        print("############## else code ##############")
         print(generated_code)
     except SyntaxError:
         pytest.fail("Else statement parsing or code generation not implemented.")
@@ -256,7 +347,6 @@ def test_function_call_codegen():
         tokens = tokenize_code(code)
         ast = parse_code(tokens)
         generated_code = generate_code(ast)
-        print("############## function call code ##############")
         print(generated_code)
     except SyntaxError:
         pytest.fail("Function call parsing or code generation not implemented.")
@@ -309,12 +399,181 @@ def test_else_if_codegen():
         tokens = tokenize_code(code)
         ast = parse_code(tokens)
         generated_code = generate_code(ast)
-        print("############## else if code ##############")
         print(generated_code)
     except SyntaxError:
         pytest.fail("Else_if statement parsing or code generation not implemented.")
 
 
-# Run all tests
+def test_assignment_ops_codegen():
+    code = """
+    PSOutput PSMain(PSInput input) {
+        PSOutput output;
+        output.out_color = float4(0.0, 0.0, 0.0, 1.0);
+
+        if (input.in_position.r > 0.5) {
+            output.out_color += input.in_position;
+        }
+
+        if (input.in_position.r < 0.5) {
+            output.out_color -= float4(0.1, 0.1, 0.1, 0.1);
+        }
+
+        if (input.in_position.g > 0.5) {
+            output.out_color *= 2.0;
+        }
+
+        if (input.in_position.b > 0.5) {
+            out_color /= 2.0;
+        }
+
+        // Testing SHIFT_LEFT (<<) operator on some condition
+        if (input.in_position.r == 0.5) {
+            uint redValue = asuint(output.out_color.r);
+            output.redValue ^= 0x1;
+            output.out_color.r = asfloat(redValue);
+
+            output.redValue |= 0x2;
+            // Applying shift left operation
+            output.redValue << 1; // Shift left by 1
+            output.redValue &= 0x3;
+        }
+        
+        // Testing SHIFT_RIGHT (>>) operator on some condition
+        if (input.in_position.r == 0.25) {
+            uint redValue = asuint(output.out_color.r);
+            output.redValue ^= 0x1;
+            output.out_color.r = asfloat(redValue);
+
+            output.redValue |= 0x2;
+            // Applying shift left operation
+            output.redValue >> 1; // Shift left by 1
+            output.redValue &= 0x3;
+        } 
+        
+        // Testing BITWISE_XOR (^) operator on some condition
+        if (input.in_position.r == 0.5) {
+            uint redValue = asuint(output.out_color.r);
+            output.redValue ^ 0x1;  
+            // BITWISE_XOR operation
+            output.out_color.r = asfloat(redValue);
+        }
+
+
+
+        return output;
+    }
+    """
+    try:
+        tokens = tokenize_code(code)
+        ast = parse_code(tokens)
+        generated_code = generate_code(ast)
+        print(generated_code)
+    except SyntaxError:
+        pytest.fail("assignment ops parsing or code generation not implemented.")
+
+
+def test_bitwise_ops_codgen():
+    code = """
+        PSOutput PSMain(PSInput input) {
+            PSOutput output;
+            output.out_color = float4(0.0, 0.0, 0.0, 1.0);
+            uint val = 0x01;
+            if (val | 0x02) {
+                // Test case for bitwise OR
+            }
+            uint filterA = 0b0001; // First filter
+            uint filterB = 0b1000; // Second filter
+
+            // Merge both filters
+            uint combinedFilter = filterA | filterB; // combinedFilter becomes 0b1001
+            return output;
+        }
+        """
+    try:
+        tokens = tokenize_code(code)
+        ast = parse_code(tokens)
+        generated_code = generate_code(ast)
+        print(generated_code)
+    except SyntaxError:
+        pytest.fail("bitwise_op parsing or codegen not implemented.")
+
+
+def test_include_codegen():
+    code = """
+    #include "common.hlsl"
+    struct VSInput {
+    float4 position : POSITION;
+    float4 color : TEXCOORD0;
+    };
+
+    struct VSOutput {
+        float4 out_position : TEXCOORD0;
+    };
+
+    VSOutput VSMain(VSInput input) {
+        VSOutput output;
+        output.out_position =  input.position;
+        return output;
+    }
+
+    struct PSInput {
+        float4 in_position : TEXCOORD0;
+    };
+
+    struct PSOutput {
+        float4 out_color : SV_TARGET0;
+    };
+
+    PSOutput PSMain(PSInput input) {
+        PSOutput output;
+        output.out_color =  input.in_position;
+        return output;
+    }
+    """
+    try:
+        tokens = tokenize_code(code)
+        ast = parse_code(tokens)
+        generated_code = generate_code(ast)
+        print(generated_code)
+    except SyntaxError:
+        pytest.fail("Include statement failed to parse or generate code.")
+
+
+def test_switch_case_codegen():
+    code = """
+    struct PSInput {
+        float4 in_position : TEXCOORD0;
+        int value : SV_InstanceID;
+    };
+
+    struct PSOutput {
+        float4 out_color : SV_Target;
+    };
+
+    PSOutput PSMain(PSInput input) {
+        PSOutput output;
+        switch (input.value) {
+            case 1:
+                output.out_color = float4(1.0, 0.0, 0.0, 1.0);
+                break;
+            case 2:
+                output.out_color = float4(0.0, 1.0, 0.0, 1.0);
+                break;
+            default:
+                output.out_color = float4(0.0, 0.0, 1.0, 1.0);
+                break;
+        }
+        return output;
+    }
+    """
+    try:
+        tokens = tokenize_code(code)
+        ast = parse_code(tokens)
+        generated_code = generate_code(ast)
+        print(generated_code)
+    except SyntaxError:
+        pytest.fail("Switch-case parsing or code generation not implemented.")
+
+
 if __name__ == "__main__":
     pytest.main()

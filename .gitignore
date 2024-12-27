@@ -3,6 +3,10 @@
 __pycache__/
 .venv
 
+# msvc specific
+.vs
+build
+
 # Compiled Object files
 *.slo
 *.lo
@@ -37,3 +41,7 @@ __pycache__/
 /compiler/__pycache__
 *:Z*
 *workspace
+
+# Python
+crosstl.egg-info
+.vscode/settings.json

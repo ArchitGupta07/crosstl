@@ -1,18 +1,18 @@
 import pytest
 from typing import List
-from crosstl.src.backend.DirectX.DirectxLexer import HLSLLexer
+from crosstl.backend.DirectX.DirectxLexer import HLSLLexer
 
 
 def tokenize_code(code: str) -> List:
     """Helper function to tokenize code."""
     lexer = HLSLLexer(code)
-    return lexer.tokenize()
+    return lexer.tokens
 
 
 def test_struct_tokenization():
     code = """
     struct VSInput {
-        float4 position : POSITION;
+        float4 position : SV_position;
         float4 color : TEXCOORD0;
     };
 
@@ -111,6 +111,122 @@ def test_else_if_tokenization():
         pytest.fail("else_if tokenization not implemented.")
 
 
-if __name__ == "__main__":
+def test_assignment_ops_tokenization():
+    code = """
+    PSOutput PSMain(PSInput input) {
+        PSOutput output;
+        output.out_color = float4(0.0, 0.0, 0.0, 1.0);
 
+        if (input.in_position.r > 0.5) {
+            output.out_color += input.in_position;
+        }
+
+        if (input.in_position.r < 0.5) {
+            output.out_color -= float4(0.1, 0.1, 0.1, 0.1);
+        }
+
+        if (input.in_position.g > 0.5) {
+            output.out_color *= 2.0;
+        }
+
+        if (input.in_position.b > 0.5) {
+            output.out_color /= 2.0;
+        }
+
+        // Testing SHIFT_LEFT (<<) operator on some condition
+        if (input.in_position.r == 0.5) {
+            uint redValue = asuint(output.out_color.r);
+            output.redValue ^= 0x1;
+            output.out_color.r = asfloat(redValue);
+            output.redValue |= 0x2;
+
+            // Applying shift left operation
+            output.redValue << 1; // Shift left by 1
+            redValue |= 0x2;
+
+            redValue &= 0x3;
+        }
+        
+        // Testing SHIFT RIGHT (>>) operator on some condition
+        if (input.in_position.r == 0.25) {
+            uint redValue = asuint(output.out_color.r);
+            output.redValue ^= 0x1;
+            output.out_color.r = asfloat(redValue);
+            output.redValue |= 0x2;
+
+            // Applying shift left operation
+            output.redValue >> 1; // Shift left by 1
+            redValue |= 0x2;
+
+            redValue &= 0x3;
+        }
+
+
+        return output;
+    }
+    """
+    try:
+        tokenize_code(code)
+    except SyntaxError:
+        pytest.fail("assign_op tokenization is not implemented.")
+
+
+def test_bitwise_or_tokenization():
+    code = """
+        uint val = 0x01;
+        val = val | 0x02;
+    """
+    try:
+        tokenize_code(code)
+    except SyntaxError:
+        pytest.fail("bitwise_op tokenization is not implemented.")
+
+
+def test_logical_or_tokenization():
+    code = """
+        bool val_0 = true;
+        bool val_1 = val_0 || false;
+    """
+    try:
+        tokenize_code(code)
+    except SyntaxError:
+        pytest.fail("logical_or tokenization is not implemented.")
+
+
+def test_logical_and_tokenization():
+    code = """
+        bool val_0 = true;
+        bool val_1 = val_0 && false;
+    """
+    try:
+        tokenize_code(code)
+    except SyntaxError:
+        pytest.fail("logical_and tokenization is not implemented.")
+
+
+def test_switch_case_tokenization():
+    code = """
+    PSOutput PSMain(PSInput input) {
+        PSOutput output;
+        switch (input.value) {
+            case 1:
+                output.out_color = float4(1.0, 0.0, 0.0, 1.0);
+                break;
+            case 2:
+                output.out_color = float4(0.0, 1.0, 0.0, 1.0);
+                break;
+            default:
+                output.out_color = float4(0.0, 0.0, 1.0, 1.0);
+                break;
+        }
+        return output;
+    }
+    """
+    try:
+        tokenize_code(code)
+    except SyntaxError:
+        pytest.fail("switch-case tokenization not implemented.")
+
+
+if __name__ == "__main__":
     pytest.main()
